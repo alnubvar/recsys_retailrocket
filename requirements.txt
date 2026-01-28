@@ -1,0 +1,24 @@
+# Core
+numpy>=1.23
+pandas>=1.5
+scipy>=1.9
+
+# Visualization / EDA
+matplotlib>=3.6
+seaborn>=0.12
+
+# Machine Learning
+scikit-learn>=1.2
+
+# Recommendation systems
+implicit>=0.7
+lightfm>=1.17
+
+# Utilities
+tqdm>=4.64
+pyyaml>=6.0
+
+# Jupyter
+jupyter>=1.0
+notebook>=6.5
+ipykernel>=6.19
