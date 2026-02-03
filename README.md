@@ -1,81 +1,52 @@
-# Recommendation System — RetailRocket (Applied ML)
+# Recommendation System for RetailRocket (Applied ML)
 
-Applied Machine Learning проект по построению рекомендательной системы
-на реальных e-commerce данных RetailRocket.
+> **Applied recommender systems case study**
+> Building and evaluating candidate-generation and ranking pipelines
+> on real-world e-commerce interaction data.
 
-Проект фокусируется не на академических экспериментах,
-а на практическом сравнении подходов и бизнес-интерпретации результатов.
-
----
-
-## 📦 Данные
-
-Используется открытый датасет **RetailRocket**:
-
-- события пользователей: `view`, `addtocart`, `transaction`
-- большой каталог товаров
-- крайне разреженные пользовательские истории
-
-Особенности данных:
-- большинство пользователей совершают 1–3 действия;
-- покупки составляют <1% всех событий;
-- классическая ситуация для e-commerce recommender systems.
+Portfolio-ready applied machine learning project that builds and evaluates a real-world e-commerce recommender system on the RetailRocket dataset. The focus is practical decision-making, model comparison, and business interpretation rather than purely academic benchmarks.
 
 ---
 
-## 🎯 Бизнес-задача
+## Overview
 
-**Цель**: рекомендовать пользователю Top-N товаров с максимальной вероятностью покупки.
+Goal: recommend Top-N products for each user with the highest probability of purchase.
 
-Ограничения:
-- разреженный implicit feedback;
-- отсутствие пользовательских профилей;
-- холодный старт для новых пользователей и товаров.
-
----
-
-## 🧠 Рассмотренные подходы
-
-В проекте реализованы и сравнены следующие модели:
-
-1. **Random baseline**
-   Нижняя граница качества.
-
-2. **Popularity baseline**
-   Глобальный топ популярных товаров.
-
-3. **Item-based Collaborative Filtering**
-   Co-occurrence товаров на основе истории покупок.
-
-4. **Matrix Factorization (ALS, implicit feedback)**
-   Классический CF-подход для неявной обратной связи.
-
-5. **Feature-based Ranking (Learning to Rank)**
-   Модель ранжирования с использованием признаков:
-   - популярность товара,
-   - активность пользователя,
-   - история взаимодействий пары (user, item).
+Constraints:
+- extremely sparse implicit feedback
+- no user profiles
+- cold start for new users and items
 
 ---
 
-## 📊 Метрики
+## Approaches Implemented
 
-Для оценки качества использовались:
+1. Random baseline
+2. Popularity baseline
+3. Item-based Collaborative Filtering (co-occurrence)
+4. Matrix Factorization (ALS for implicit feedback)
+5. Feature-based Ranking (Learning to Rank)
 
+---
+
+## Evaluation
+
+Metrics:
 - `precision@k`
 - `recall@k`
 
-Оценка проводилась на test-выборке по фактическим покупкам пользователей.
+Test split is based on actual user purchases.
 
 ---
 
-## 🧪 Основные результаты
+## Key Results
 
-- **Popularity baseline** оказался сильным и стабильным решением
-  на разреженных e-commerce данных.
-- **Item-based CF** и **ALS** не дали прироста над популярностью
-  из-за ограниченной истории пользователей и малого числа покупок.
-- **Feature-based ranking** показал наилучшее качество:
+Observations:
+- Popularity baseline is surprisingly strong and stable on sparse e-commerce data.
+- Item-based CF and ALS do not outperform popularity due to limited user histories and low purchase frequency.
+- Feature-based ranking delivers the best quality.
+
+Sample metrics:
 
 | k | precision@k | recall@k |
 |---|-------------|----------|
@@ -85,50 +56,40 @@ Applied Machine Learning проект по построению рекоменд
 
 ---
 
-## 🔍 Feature Importance
+## Feature Importance (Ranking Model)
 
-Для модели ранжирования была проанализирована важность признаков
-(RandomForest feature importance):
+RandomForest feature importance:
+- `item_pop` ~66%
+- `user_activity` ~16%
+- `ui_interactions` ~9%
+- `ui_max_weight` ~9%
 
-- `item_pop` — ~66%
-- `user_activity` — ~16%
-- `ui_interactions` — ~9%
-- `ui_max_weight` — ~9%
-
-Вывод:
-модель в первую очередь опирается на глобальный спрос,
-а затем уточняет рекомендации на основе поведения пользователя
-и истории конкретной пары.
+Interpretation: the model relies primarily on global demand, then refines recommendations using user behavior and user-item interaction history.
 
 ---
 
-## 🏗 Рекомендованная production-архитектура
+## Suggested Production Architecture
 
-Оптимальный pipeline для реального применения:
+1. Candidate generation
+   - popularity-based recommendations
+   - optional item-based CF for diversity
+2. Ranking
+   - feature-based model (RandomForest or Gradient Boosting)
+3. Cold start
+   - new users: popularity
+   - new items: controlled exposure and feedback collection
 
-1. **Candidate generation**
-   - popularity-based рекомендации;
-   - (опционально) item-based CF для разнообразия.
-
-2. **Ranking**
-   - feature-based модель (RandomForest / Gradient Boosting).
-
-3. **Cold-start**
-   - для новых пользователей — popularity;
-   - для новых товаров — ограниченное продвижение и сбор сигналов.
-
-Такой подход масштабируется, устойчив к разреженности
-и соответствует production best practices.
+This pipeline scales well, is robust to sparsity, and aligns with production best practices.
 
 ---
 
-## 📁 Структура проекта
+## Project Structure
 
 ```
 RECSYS_RETAILROCKET/
 ├── data/
-│ ├── raw/ # исходные данные RetailRocket
-│ └── processed/ # train / val / test
+│ ├── raw/                # RetailRocket raw data
+│ └── processed/          # train / val / test
 ├── notebooks/
 │ ├── 00_dataset_overview.ipynb
 │ ├── 01_eda_events.ipynb
@@ -147,27 +108,33 @@ RECSYS_RETAILROCKET/
 └── LICENSE
 ```
 
+---
+
+## Limitations and Next Steps
+
+- add temporal and session features
+- evaluate stronger rankers (LightGBM, XGBoost)
+- explore neural candidate generation
+- add online metrics and A/B testing plan
 
 ---
 
-## 🧩 Ограничения и будущая работа
+## Key Takeaway
 
-- добавление временных и сессионных признаков;
-- более сильные ранкеры (LightGBM / XGBoost);
-- нейронные модели для генерации кандидатов;
-- онлайн-метрики и A/B тестирование.
+In highly sparse e-commerce settings,
+strong baselines and feature-based ranking
+often outperform complex collaborative filtering models.
+Practical recommender systems should prioritize robustness,
+scalability, and business impact over algorithmic complexity.
 
 ---
 
-## 🏁 Итог
+## Summary
 
-Проект демонстрирует полный applied ML pipeline
-для рекомендательной системы на реальных данных:
+This project delivers a full applied ML pipeline for a real e-commerce recommender system:
+- data exploration and constraint analysis
+- baseline and collaborative filtering comparison
+- feature-based ranking model
+- business-focused interpretation and production recommendations
 
-- EDA и анализ ограничений данных;
-- сравнение базовых и CF-подходов;
-- построение feature-based ranking модели;
-- бизнес-интерпретация и production-рекомендации.
-
-Проект завершён как версия **v1.0** и готов для портфолио.
-
+Version: v1.0, portfolio-ready.
